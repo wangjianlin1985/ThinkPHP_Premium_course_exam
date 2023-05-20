@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+  <TITLE>修改题库题目信息</TITLE>
+  <link href="__PUBLIC__/plugins/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/bootstrap-dashen.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/font-awesome.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/animate.css" rel="stylesheet"> 
+</head>
+<body style="margin-top:70px;"> 
+<div class="container">
+{include file="common/header" /}
+	<div class="col-md-9 wow fadeInLeft">
+	<ul class="breadcrumb">
+  		<li><a href="__PUBLIC__/index.php">首页</a></li>
+  		<li class="active">题库题目信息修改</li>
+	</ul>
+		<div class="row"> 
+      	<form class="form-horizontal" name="subjectEditForm" id="subjectEditForm" enctype="multipart/form-data" method="post"  class="mar_t15">
+		  <div class="form-group">
+			 <label for="subject_subjectId_edit" class="col-md-3 text-right">题目id:</label>
+			 <div class="col-md-9"> 
+			 	<input type="text" id="subject_subjectId_edit" name="subject_subjectId" class="form-control" placeholder="请输入题目id" readOnly>
+			 </div>
+		  </div> 
+		  <div class="form-group">
+		  	 <label for="subject_title_edit" class="col-md-3 text-right">题目标题:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="subject_title_edit" name="subject_title" class="form-control" placeholder="请输入题目标题">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="subject_a_option_edit" class="col-md-3 text-right">A:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="subject_a_option_edit" name="subject_a_option" class="form-control" placeholder="请输入A">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="subject_b_option_edit" class="col-md-3 text-right">B:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="subject_b_option_edit" name="subject_b_option" class="form-control" placeholder="请输入B">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="subject_c_option_edit" class="col-md-3 text-right">C:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="subject_c_option_edit" name="subject_c_option" class="form-control" placeholder="请输入C">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="subject_d_option_edit" class="col-md-3 text-right">D:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="subject_d_option_edit" name="subject_d_option" class="form-control" placeholder="请输入D">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="subject_rightOption_edit" class="col-md-3 text-right">正确答案:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="subject_rightOption_edit" name="subject_rightOption" class="form-control" placeholder="请输入正确答案">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="subject_score_edit" class="col-md-3 text-right">得分:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="subject_score_edit" name="subject_score" class="form-control" placeholder="请输入得分">
+			 </div>
+		  </div>
+			  <div class="form-group">
+			  	<span class="col-md-3"></span>
+			  	<span onclick="ajaxSubjectModify();" class="btn btn-primary bottom5 top5">修改</span>
+			  </div>
+		</form> 
+	    <style>#subjectEditForm .form-group {margin-bottom:5px;}  </style>
+      </div>
+   </div>
+</div>
+
+
+{include file="common/footer" /}
+<script src="__PUBLIC__/plugins/jquery.min.js"></script>
+<script src="__PUBLIC__/plugins/bootstrap.js"></script>
+<script src="__PUBLIC__/plugins/wow.min.js"></script>
+<script src="__PUBLIC__/plugins/bootstrap-datetimepicker.min.js"></script>
+<script src="__PUBLIC__/plugins/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jsdate.js"></script>
+<script>
+/*弹出修改题库题目界面并初始化数据*/
+function subjectEdit(subjectId) {
+	$.ajax({
+		url :  "{:url('Subject/update')}?subjectId=" + subjectId,
+		type : "get",
+		dataType: "json",
+		success : function (subject, response, status) {
+			if (subject) {
+				$("#subject_subjectId_edit").val(subject.subjectId);
+				$("#subject_title_edit").val(subject.title);
+				$("#subject_a_option_edit").val(subject.a_option);
+				$("#subject_b_option_edit").val(subject.b_option);
+				$("#subject_c_option_edit").val(subject.c_option);
+				$("#subject_d_option_edit").val(subject.d_option);
+				$("#subject_rightOption_edit").val(subject.rightOption);
+				$("#subject_score_edit").val(subject.score);
+			} else {
+				alert("获取信息失败！");
+			}
+		}
+	});
+}
+
+/*ajax方式提交题库题目信息表单给服务器端修改*/
+function ajaxSubjectModify() {
+	$.ajax({
+		url :  "{:url('Subject/update')}",
+		type : "post",
+		dataType: "json",
+		data: new FormData($("#subjectEditForm")[0]),
+		success : function (obj, response, status) {
+            if(obj.success){
+                alert("信息修改成功！");
+                location.reload(true);
+                $("#subjectQueryForm").submit();
+            }else{
+                alert(obj.message);
+            } 
+		},
+		processData: false,
+		contentType: false,
+	});
+}
+
+$(function(){
+        /*小屏幕导航点击关闭菜单*/
+        $('.navbar-collapse a').click(function(){
+            $('.navbar-collapse').collapse('hide');
+        });
+        new WOW().init();
+    subjectEdit("{$subjectId}");
+ })
+ </script> 
+</body>
+</html>
+

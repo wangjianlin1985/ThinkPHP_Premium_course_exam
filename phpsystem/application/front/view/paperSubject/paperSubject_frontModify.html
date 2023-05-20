@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+  <TITLE>修改试卷题目信息</TITLE>
+  <link href="__PUBLIC__/plugins/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/bootstrap-dashen.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/font-awesome.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/animate.css" rel="stylesheet"> 
+</head>
+<body style="margin-top:70px;"> 
+<div class="container">
+{include file="common/header" /}
+	<div class="col-md-9 wow fadeInLeft">
+	<ul class="breadcrumb">
+  		<li><a href="__PUBLIC__/index.php">首页</a></li>
+  		<li class="active">试卷题目信息修改</li>
+	</ul>
+		<div class="row"> 
+      	<form class="form-horizontal" name="paperSubjectEditForm" id="paperSubjectEditForm" enctype="multipart/form-data" method="post"  class="mar_t15">
+		  <div class="form-group">
+			 <label for="paperSubject_psId_edit" class="col-md-3 text-right">试卷题目id:</label>
+			 <div class="col-md-9"> 
+			 	<input type="text" id="paperSubject_psId_edit" name="paperSubject_psId" class="form-control" placeholder="请输入试卷题目id" readOnly>
+			 </div>
+		  </div> 
+		  <div class="form-group">
+		  	 <label for="paperSubject_paperObj_paperId_edit" class="col-md-3 text-right">测试试卷:</label>
+		  	 <div class="col-md-9">
+			    <select id="paperSubject_paperObj_paperId_edit" name="paperSubject_paperObj_paperId" class="form-control">
+			    </select>
+		  	 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="paperSubject_subjectObj_subjectId_edit" class="col-md-3 text-right">题库题目:</label>
+		  	 <div class="col-md-9">
+			    <select id="paperSubject_subjectObj_subjectId_edit" name="paperSubject_subjectObj_subjectId" class="form-control">
+			    </select>
+		  	 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="paperSubject_addTime_edit" class="col-md-3 text-right">添加时间:</label>
+		  	 <div class="col-md-9">
+                <div class="input-group date paperSubject_addTime_edit col-md-12" data-link-field="paperSubject_addTime_edit">
+                    <input class="form-control" id="paperSubject_addTime_edit" name="paperSubject_addTime" size="16" type="text" value="" placeholder="请选择添加时间" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+		  	 </div>
+		  </div>
+			  <div class="form-group">
+			  	<span class="col-md-3"></span>
+			  	<span onclick="ajaxPaperSubjectModify();" class="btn btn-primary bottom5 top5">修改</span>
+			  </div>
+		</form> 
+	    <style>#paperSubjectEditForm .form-group {margin-bottom:5px;}  </style>
+      </div>
+   </div>
+</div>
+
+
+{include file="common/footer" /}
+<script src="__PUBLIC__/plugins/jquery.min.js"></script>
+<script src="__PUBLIC__/plugins/bootstrap.js"></script>
+<script src="__PUBLIC__/plugins/wow.min.js"></script>
+<script src="__PUBLIC__/plugins/bootstrap-datetimepicker.min.js"></script>
+<script src="__PUBLIC__/plugins/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jsdate.js"></script>
+<script>
+/*弹出修改试卷题目界面并初始化数据*/
+function paperSubjectEdit(psId) {
+	$.ajax({
+		url :  "{:url('PaperSubject/update')}?psId=" + psId,
+		type : "get",
+		dataType: "json",
+		success : function (paperSubject, response, status) {
+			if (paperSubject) {
+				$("#paperSubject_psId_edit").val(paperSubject.psId);
+				$.ajax({
+					url: "{:url('Paper/listAll')}",
+					type: "get",
+					dataType: "json",
+					success: function(papers,response,status) { 
+						$("#paperSubject_paperObj_paperId_edit").empty();
+						var html="";
+		        		$(papers).each(function(i,paper){
+		        			html += "<option value='" + paper.paperId + "'>" + paper.paperName + "</option>";
+		        		});
+		        		$("#paperSubject_paperObj_paperId_edit").html(html);
+		        		$("#paperSubject_paperObj_paperId_edit").val(paperSubject.paperObj);
+					}
+				});
+				$.ajax({
+					url: "{:url('Subject/listAll')}",
+					type: "get",
+					dataType: "json",
+					success: function(subjects,response,status) { 
+						$("#paperSubject_subjectObj_subjectId_edit").empty();
+						var html="";
+		        		$(subjects).each(function(i,subject){
+		        			html += "<option value='" + subject.subjectId + "'>" + subject.title + "</option>";
+		        		});
+		        		$("#paperSubject_subjectObj_subjectId_edit").html(html);
+		        		$("#paperSubject_subjectObj_subjectId_edit").val(paperSubject.subjectObj);
+					}
+				});
+				$("#paperSubject_addTime_edit").val(paperSubject.addTime);
+			} else {
+				alert("获取信息失败！");
+			}
+		}
+	});
+}
+
+/*ajax方式提交试卷题目信息表单给服务器端修改*/
+function ajaxPaperSubjectModify() {
+	$.ajax({
+		url :  "{:url('PaperSubject/update')}",
+		type : "post",
+		dataType: "json",
+		data: new FormData($("#paperSubjectEditForm")[0]),
+		success : function (obj, response, status) {
+            if(obj.success){
+                alert("信息修改成功！");
+                location.reload(true);
+                $("#paperSubjectQueryForm").submit();
+            }else{
+                alert(obj.message);
+            } 
+		},
+		processData: false,
+		contentType: false,
+	});
+}
+
+$(function(){
+        /*小屏幕导航点击关闭菜单*/
+        $('.navbar-collapse a').click(function(){
+            $('.navbar-collapse').collapse('hide');
+        });
+        new WOW().init();
+    /*添加时间组件*/
+    $('.paperSubject_addTime_edit').datetimepicker({
+    	language:  'zh-CN',  //语言
+    	format: 'yyyy-mm-dd hh:ii:ss',
+    	weekStart: 1,
+    	todayBtn:  1,
+    	autoclose: 1,
+    	minuteStep: 1,
+    	todayHighlight: 1,
+    	startView: 2,
+    	forceParse: 0
+    });
+    paperSubjectEdit("{$psId}");
+ })
+ </script> 
+</body>
+</html>
+

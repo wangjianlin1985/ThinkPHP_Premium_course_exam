@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+  <TITLE>查看测试试卷详情</TITLE>
+  <link href="__PUBLIC__/plugins/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/bootstrap-dashen.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/font-awesome.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/animate.css" rel="stylesheet"> 
+</head>
+<body style="margin-top:70px;"> 
+{include file="common/header" /}
+<form action="{:url('StudentAnswer/submitAnswer')}" method="post" onsubmit="return checkRadios();" enctype="multipart/form-data" name="form1">
+<div class="container">
+	<ul class="breadcrumb">
+  		<li><a href="__PUBLIC__/index.php">首页</a></li>
+  		<li><a href="{:url('Paper/frontlist')}">测试试卷信息</a></li>
+  		<li class="active">详情查看</li>
+	</ul>
+	<div class="row bottom15"> 
+		<div class="col-md-2 col-xs-4 text-right bold">试卷id:</div>
+		<div class="col-md-10 col-xs-6">{$paper.paperId}</div>
+	</div>
+	<div class="row bottom15"> 
+		<div class="col-md-2 col-xs-4 text-right bold">试卷名称:</div>
+		<div class="col-md-10 col-xs-6">{$paper.paperName}</div>
+	</div>
+	<div class="row bottom15"> 
+		<div class="col-md-2 col-xs-4 text-right bold">测试目标:</div>
+		<div class="col-md-10 col-xs-6">{$paper.purpose}</div>
+	</div>
+	<div class="row bottom15"> 
+		<div class="col-md-2 col-xs-4 text-right bold">考试时间:</div>
+		<div class="col-md-10 col-xs-6">{$paper.examTime}分钟</div>
+	</div>
+	<div class="row bottom15"> 
+		<div class="col-md-2 col-xs-4 text-right bold">试卷满分:</div>
+		<div class="col-md-10 col-xs-6">{$paper.totalScore}分</div>
+	</div>
+	<div class="row bottom15"> 
+		<div class="col-md-2 col-xs-4 text-right bold">试卷备注:</div>
+		<div class="col-md-10 col-xs-6">{$paper.paperMemo}</div>
+	</div>
+
+	<?php
+		$currentIndex = 1;
+	?>
+
+	{volist name="subjects" id="subject"}
+	<div class="row bottom15">
+		<div class="col-md-2 col-xs-4 text-right bold">题目{$currentIndex++}:</div>
+		<div class="col-md-10 col-xs-6">{$subject.title}&nbsp;&nbsp;（分值:{$subject.score}分）</div>
+	</div>
+	<div class="row bottom15">
+
+		<div class="col-md-2 col-xs-4 text-right bold">A:</div>
+		<div class="col-md-10 col-xs-6">
+			<input style="margin:5px;" type="radio" name="s_{$subject.subjectId}" value="A"/>{$subject.a_option}
+		</div>
+	</div>
+	<div class="row bottom15">
+		<div class="col-md-2 col-xs-4 text-right bold">B:</div>
+		<div class="col-md-10 col-xs-6">
+			<input style="margin:5px;" type="radio" name="s_{$subject.subjectId}" value="B"/>{$subject.b_option}
+		</div>
+	</div>
+	<div class="row bottom15">
+		<div class="col-md-2 col-xs-4 text-right bold">C:</div>
+		<div class="col-md-10 col-xs-6">
+			<input style="margin:5px;" type="radio" name="s_{$subject.subjectId}" value="C"/>{$subject.c_option}
+		</div>
+	</div>
+	<div class="row bottom15">
+		<div class="col-md-2 col-xs-4 text-right bold">D:</div>
+		<div class="col-md-10 col-xs-6">
+			<input style="margin:5px;" type="radio" name="s_{$subject.subjectId}" value="D"/>{$subject.d_option}
+		</div>
+	</div>
+	{/volist}
+
+
+	<div class="row bottom15">
+		<div class="col-md-2 col-xs-4"></div>
+		<div class="col-md-6 col-xs-6">
+			<input type="hidden" name="paperId" value="{$paper.paperId}"/>
+			<input type="submit" class="btn btn-primary" value="提交答案"/>
+			<button onclick="history.back();" class="btn btn-info">返回</button>
+		</div>
+	</div>
+</div>
+</form>
+
+{include file="common/footer" /}
+<script src="__PUBLIC__/plugins/jquery.min.js"></script>
+<script src="__PUBLIC__/plugins/bootstrap.js"></script>
+<script src="__PUBLIC__/plugins/wow.min.js"></script>
+<script>
+
+    function checkRadios(){
+        //取得所有input标签
+        var radios = document.getElementsByTagName("input");
+        var arr = [];
+        var radioArray = [];
+        //循环标签
+        for(var i=0;i<radios.length;i++){
+            //判断标签是否是单选框标签
+            if (radios[i].type=="radio"){
+                var radio = radios[i].checked;
+                radioArray.push(radios[i]); //把所有单选框装入数组
+                if(radio){
+                    arr.push(radios[i]); //判断单选框是否为选中状态, 选中的装入数组
+                }
+            }
+        }
+        //如果所有单选框/4的个数==选中的个数,就返回true ,
+        if((radioArray.length/4)==arr.length){
+            return true;
+        }else{
+            alert("请作答所有试题!");
+            return false;
+        }
+    }
+
+
+$(function(){
+        /*小屏幕导航点击关闭菜单*/
+        $('.navbar-collapse a').click(function(){
+            $('.navbar-collapse').collapse('hide');
+        });
+        new WOW().init();
+ })
+ </script> 
+</body>
+</html>
+

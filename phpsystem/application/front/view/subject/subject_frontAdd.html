@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+<title>题库题目添加</title>
+<link href="__PUBLIC__/plugins/bootstrap.css" rel="stylesheet">
+<link href="__PUBLIC__/plugins/bootstrap-dashen.css" rel="stylesheet">
+<link href="__PUBLIC__/plugins/font-awesome.css" rel="stylesheet">
+<link href="__PUBLIC__/plugins/animate.css" rel="stylesheet">
+<link href="__PUBLIC__/plugins/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+</head>
+<body style="margin-top:70px;">
+{include file="common/header" /}
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 wow fadeInUp" data-wow-duration="0.5s">
+			<div>
+				<!-- Nav tabs -->
+				<ul class="nav nav-tabs" role="tablist">
+			    	<li role="presentation" ><a href="{:url('Subject/frontlist')}">题库题目列表</a></li>
+			    	<li role="presentation" class="active"><a href="#subjectAdd" aria-controls="subjectAdd" role="tab" data-toggle="tab">添加题库题目</a></li>
+				</ul>
+				<!-- Tab panes -->
+				<div class="tab-content">
+				    <div role="tabpanel" class="tab-pane" id="subjectList">
+				    </div>
+				    <div role="tabpanel" class="tab-pane active" id="subjectAdd"> 
+				      	<form class="form-horizontal" name="subjectAddForm" id="subjectAddForm" enctype="multipart/form-data" method="post"  class="mar_t15">
+						  <div class="form-group">
+						  	 <label for="subject_title" class="col-md-2 text-right">题目标题:</label>
+						  	 <div class="col-md-8">
+							    <input type="text" id="subject_title" name="subject_title" class="form-control" placeholder="请输入题目标题">
+							 </div>
+						  </div>
+						  <div class="form-group">
+						  	 <label for="subject_a_option" class="col-md-2 text-right">A:</label>
+						  	 <div class="col-md-8">
+							    <input type="text" id="subject_a_option" name="subject_a_option" class="form-control" placeholder="请输入A">
+							 </div>
+						  </div>
+						  <div class="form-group">
+						  	 <label for="subject_b_option" class="col-md-2 text-right">B:</label>
+						  	 <div class="col-md-8">
+							    <input type="text" id="subject_b_option" name="subject_b_option" class="form-control" placeholder="请输入B">
+							 </div>
+						  </div>
+						  <div class="form-group">
+						  	 <label for="subject_c_option" class="col-md-2 text-right">C:</label>
+						  	 <div class="col-md-8">
+							    <input type="text" id="subject_c_option" name="subject_c_option" class="form-control" placeholder="请输入C">
+							 </div>
+						  </div>
+						  <div class="form-group">
+						  	 <label for="subject_d_option" class="col-md-2 text-right">D:</label>
+						  	 <div class="col-md-8">
+							    <input type="text" id="subject_d_option" name="subject_d_option" class="form-control" placeholder="请输入D">
+							 </div>
+						  </div>
+						  <div class="form-group">
+						  	 <label for="subject_rightOption" class="col-md-2 text-right">正确答案:</label>
+						  	 <div class="col-md-8">
+							    <input type="text" id="subject_rightOption" name="subject_rightOption" class="form-control" placeholder="请输入正确答案">
+							 </div>
+						  </div>
+						  <div class="form-group">
+						  	 <label for="subject_score" class="col-md-2 text-right">得分:</label>
+						  	 <div class="col-md-8">
+							    <input type="text" id="subject_score" name="subject_score" class="form-control" placeholder="请输入得分">
+							 </div>
+						  </div>
+				          <div class="form-group">
+				             <span class="col-md-2"></span>
+				             <span onclick="ajaxSubjectAdd();" class="btn btn-primary bottom5 top5">添加</span>
+				          </div>
+						</form> 
+				        <style>#subjectAddForm .form-group {margin:10px;}  </style>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> 
+</div>
+
+{include file="common/footer" /}
+<script src="__PUBLIC__/plugins/jquery.min.js"></script>
+<script src="__PUBLIC__/plugins/bootstrap.js"></script>
+<script src="__PUBLIC__/plugins/wow.min.js"></script>
+<script src="__PUBLIC__/plugins/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/plugins/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+<script type="text/javascript" src="__PUBLIC__/plugins/locales/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+<script>
+	//提交添加题库题目信息
+	function ajaxSubjectAdd() { 
+		//提交之前先验证表单
+		$("#subjectAddForm").data('bootstrapValidator').validate();
+		if(!$("#subjectAddForm").data('bootstrapValidator').isValid()){
+			return;
+		}
+		jQuery.ajax({
+			type : "post",
+			url : "{:url('Subject/frontAdd')}",
+			dataType : "json" , 
+			data: new FormData($("#subjectAddForm")[0]),
+			success : function(obj) {
+				if(obj.success){ 
+					alert("保存成功！");
+					$("#subjectAddForm").find("input").val("");
+					$("#subjectAddForm").find("textarea").val("");
+				} else {
+					alert(obj.message);
+				}
+			},
+			processData: false, 
+			contentType: false, 
+		});
+	} 
+$(function(){
+	/*小屏幕导航点击关闭菜单*/
+    $('.navbar-collapse a').click(function(){
+        $('.navbar-collapse').collapse('hide');
+    });
+    new WOW().init();
+	//验证题库题目添加表单字段
+	$('#subjectAddForm').bootstrapValidator({
+		feedbackIcons: {
+			valid: 'glyphicon glyphicon-ok',
+			invalid: 'glyphicon glyphicon-remove',
+			validating: 'glyphicon glyphicon-refresh'
+		},
+		fields: {
+			"subject_title": {
+				validators: {
+					notEmpty: {
+						message: "题目标题不能为空",
+					}
+				}
+			},
+			"subject_a_option": {
+				validators: {
+					notEmpty: {
+						message: "A不能为空",
+					}
+				}
+			},
+			"subject_b_option": {
+				validators: {
+					notEmpty: {
+						message: "B不能为空",
+					}
+				}
+			},
+			"subject_c_option": {
+				validators: {
+					notEmpty: {
+						message: "C不能为空",
+					}
+				}
+			},
+			"subject_rightOption": {
+				validators: {
+					notEmpty: {
+						message: "正确答案不能为空",
+					}
+				}
+			},
+			"subject_score": {
+				validators: {
+					notEmpty: {
+						message: "得分不能为空",
+					},
+					numeric: {
+						message: "得分不正确"
+					}
+				}
+			},
+		}
+	}); 
+})
+</script>
+</body>
+</html>

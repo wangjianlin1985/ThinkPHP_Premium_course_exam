@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+  <TITLE>修改家庭作业信息</TITLE>
+  <link href="__PUBLIC__/plugins/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/bootstrap-dashen.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/font-awesome.css" rel="stylesheet">
+  <link href="__PUBLIC__/plugins/animate.css" rel="stylesheet"> 
+</head>
+<body style="margin-top:70px;"> 
+<div class="container">
+{include file="common/header" /}
+	<div class="col-md-9 wow fadeInLeft">
+	<ul class="breadcrumb">
+  		<li><a href="__PUBLIC__/index.php">首页</a></li>
+  		<li class="active">家庭作业信息修改</li>
+	</ul>
+		<div class="row"> 
+      	<form class="form-horizontal" name="homeworkEditForm" id="homeworkEditForm" enctype="multipart/form-data" method="post"  class="mar_t15">
+		  <div class="form-group">
+			 <label for="homework_homeworkId_edit" class="col-md-3 text-right">作业id:</label>
+			 <div class="col-md-9"> 
+			 	<input type="text" id="homework_homeworkId_edit" name="homework_homeworkId" class="form-control" placeholder="请输入作业id" readOnly>
+			 </div>
+		  </div> 
+		  <div class="form-group">
+		  	 <label for="homework_taskTitle_edit" class="col-md-3 text-right">作业任务:</label>
+		  	 <div class="col-md-9">
+			    <input type="text" id="homework_taskTitle_edit" name="homework_taskTitle" class="form-control" placeholder="请输入作业任务">
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="homework_taskContent_edit" class="col-md-3 text-right">作业要求:</label>
+		  	 <div class="col-md-9">
+			    <script name="homework_taskContent" id="homework_taskContent_edit" type="text/plain"   style="width:100%;height:500px;"></script>
+			 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="homework_teacherObj_teacherNo_edit" class="col-md-3 text-right">布置的老师:</label>
+		  	 <div class="col-md-9">
+			    <select id="homework_teacherObj_teacherNo_edit" name="homework_teacherObj_teacherNo" class="form-control">
+			    </select>
+		  	 </div>
+		  </div>
+		  <div class="form-group">
+		  	 <label for="homework_homeworkDate_edit" class="col-md-3 text-right">作业日期:</label>
+		  	 <div class="col-md-9">
+                <div class="input-group date homework_homeworkDate_edit col-md-12" data-link-field="homework_homeworkDate_edit" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" id="homework_homeworkDate_edit" name="homework_homeworkDate" size="16" type="text" value="" placeholder="请选择作业日期" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+		  	 </div>
+		  </div>
+			  <div class="form-group">
+			  	<span class="col-md-3"></span>
+			  	<span onclick="ajaxHomeworkModify();" class="btn btn-primary bottom5 top5">修改</span>
+			  </div>
+		</form> 
+	    <style>#homeworkEditForm .form-group {margin-bottom:5px;}  </style>
+      </div>
+   </div>
+</div>
+
+
+{include file="common/footer" /}
+<script src="__PUBLIC__/plugins/jquery.min.js"></script>
+<script src="__PUBLIC__/plugins/bootstrap.js"></script>
+<script src="__PUBLIC__/plugins/wow.min.js"></script>
+<script src="__PUBLIC__/plugins/bootstrap-datetimepicker.min.js"></script>
+<script src="__PUBLIC__/plugins/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jsdate.js"></script>
+<script type="text/javascript" charset="utf-8" src="__PUBLIC__/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="__PUBLIC__/ueditor/ueditor.all.js"> </script>
+<script type="text/javascript" charset="utf-8" src="__PUBLIC__/ueditor/lang/zh-cn/zh-cn.js"></script>
+<script>
+var homework_taskContent_editor = UE.getEditor('homework_taskContent_edit'); //作业要求编辑框
+/*弹出修改家庭作业界面并初始化数据*/
+function homeworkEdit(homeworkId) {
+  homework_taskContent_editor.addListener("ready", function () {
+    // editor准备好之后才可以使用 
+    ajaxModifyQuery(homeworkId);
+  });
+}
+ function ajaxModifyQuery(homeworkId) {
+	$.ajax({
+		url :  "{:url('Homework/update')}?homeworkId=" + homeworkId,
+		type : "get",
+		dataType: "json",
+		success : function (homework, response, status) {
+			if (homework) {
+				$("#homework_homeworkId_edit").val(homework.homeworkId);
+				$("#homework_taskTitle_edit").val(homework.taskTitle);
+				homework_taskContent_editor.setContent(homework.taskContent, false);
+				$.ajax({
+					url: "{:url('Teacher/listAll')}",
+					type: "get",
+					dataType: "json",
+					success: function(teachers,response,status) { 
+						$("#homework_teacherObj_teacherNo_edit").empty();
+						var html="";
+		        		$(teachers).each(function(i,teacher){
+		        			html += "<option value='" + teacher.teacherNo + "'>" + teacher.teacherName + "</option>";
+		        		});
+		        		$("#homework_teacherObj_teacherNo_edit").html(html);
+		        		$("#homework_teacherObj_teacherNo_edit").val(homework.teacherObj);
+					}
+				});
+				$("#homework_homeworkDate_edit").val(homework.homeworkDate);
+			} else {
+				alert("获取信息失败！");
+			}
+		}
+	});
+}
+
+/*ajax方式提交家庭作业信息表单给服务器端修改*/
+function ajaxHomeworkModify() {
+	$.ajax({
+		url :  "{:url('Homework/update')}",
+		type : "post",
+		dataType: "json",
+		data: new FormData($("#homeworkEditForm")[0]),
+		success : function (obj, response, status) {
+            if(obj.success){
+                alert("信息修改成功！");
+                location.reload(true);
+                $("#homeworkQueryForm").submit();
+            }else{
+                alert(obj.message);
+            } 
+		},
+		processData: false,
+		contentType: false,
+	});
+}
+
+$(function(){
+        /*小屏幕导航点击关闭菜单*/
+        $('.navbar-collapse a').click(function(){
+            $('.navbar-collapse').collapse('hide');
+        });
+        new WOW().init();
+    /*作业日期组件*/
+    $('.homework_homeworkDate_edit').datetimepicker({
+    	language:  'zh-CN',  //语言
+    	format: 'yyyy-mm-dd',
+    	minView: 2,
+    	weekStart: 1,
+    	todayBtn:  1,
+    	autoclose: 1,
+    	minuteStep: 1,
+    	todayHighlight: 1,
+    	startView: 2,
+    	forceParse: 0
+    });
+    homeworkEdit("{$homeworkId}");
+ })
+ </script> 
+</body>
+</html>
+

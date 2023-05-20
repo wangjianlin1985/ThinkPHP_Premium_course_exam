@@ -1,0 +1,41 @@
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/backcss/paperSubject.css" />
+<div id="paperSubject_editDiv">
+	<form id="paperSubjectEditForm" enctype="multipart/form-data"  method="post">
+		<div>
+			<span class="label">试卷题目id:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="paperSubject_psId_edit" name="paperSubject_psId" value="{$psId}" style="width:200px" />
+			</span>
+		</div>
+
+		<div>
+			<span class="label">测试试卷:</span>
+			<span class="inputControl">
+				<input class="textbox"  id="paperSubject_paperObj_paperId_edit" name="paperSubject_paperObj_paperId" style="width: auto"/>
+			</span>
+		</div>
+		<div>
+			<span class="label">题库题目:</span>
+			<span class="inputControl">
+				<input class="textbox"  id="paperSubject_subjectObj_subjectId_edit" name="paperSubject_subjectObj_subjectId" style="width: auto"/>
+			</span>
+		</div>
+		<div>
+			<span class="label">添加时间:</span>
+			<span class="inputControl">
+				<input class="textbox" type="text" id="paperSubject_addTime_edit" name="paperSubject_addTime" />
+
+			</span>
+
+		</div>
+		<div class="operation">
+			<a id="paperSubjectModifyButton" class="easyui-linkbutton">更新</a> 
+		</div>
+	</form>
+</div>
+<script>
+	var publicURL = "__PUBLIC__/";
+	var backURL = "__PUBLIC__/index.php/back/";
+</script>
+<script src="__PUBLIC__/backjs/paperSubject/paperSubject_modify.js"></script>
+
